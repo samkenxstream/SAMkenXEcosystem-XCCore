@@ -84,7 +84,7 @@ gem 'rails-i18n', '6.0.0' # Localizations for Rails built-ins
 gem 'redcarpet', '3.5.1' # Process markdown in form textareas (justifications)
 gem 'sass-rails', '5.1.0', require: false # For .scss files (CSS extension)
 gem 'scout_apm', '4.1.2' # Monitor for memory leaks
-gem 'secure_headers', '6.3.3' # Add hardening measures to HTTP headers
+gem 'secure_headers', '6.3.4' # Add hardening measures to HTTP headers
 # WARNING!!!!
 # CHECK DEPLOYMENT FIRST IF YOU UPDATE sprockets-rails.
 # The gem sprockets-rails version 3.4.1 (from 3.2.2) caused a regression
@@ -108,7 +108,7 @@ group :development, :test do
   # gem 'pronto-brakeman', '0.9.1'
   gem 'pronto-eslint', '0.11.0'
   gem 'pronto-rails_best_practices', '0.11.0'
-  gem 'pronto-rubocop', '0.11.1'
+  gem 'pronto-rubocop', '0.11.2'
   # gem 'railroader', '4.3.8' # Security static analyzer. OSS fork of Brakeman
   gem 'rubocop', '1.0.0', require: false # Style checker
   gem 'rubocop-performance', '1.10.2', require: false # Performance cops
