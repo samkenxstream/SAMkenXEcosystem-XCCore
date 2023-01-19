@@ -148,7 +148,7 @@ GEM
     gitlab (4.18.0)
       httparty (~> 0.18)
       terminal-table (>= 1.5.1)
-    globalid (1.0.0)
+    globalid (1.0.1)
       activesupport (>= 5.0)
     hashdiff (1.0.1)
     hashie (5.0.0)
@@ -207,7 +207,7 @@ GEM
     mime-types-data (3.2022.0105)
     mini_mime (1.1.2)
     mini_portile2 (2.8.0)
-    minitest (5.16.2)
+    minitest (5.17.0)
     minitest-reporters (1.5.0)
       ansi
       builder
@@ -433,7 +433,7 @@ GEM
     tomlrb (2.0.3)
     translation (1.32)
       gettext (~> 3.2, >= 3.2.5, <= 3.4.3)
-    tzinfo (2.0.4)
+    tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)
@@ -463,7 +463,7 @@ GEM
     xpath (3.2.0)
       nokogiri (~> 1.8)
     yaml-lint (0.0.10)
-    zeitwerk (2.6.0)
+    zeitwerk (2.6.6)
 
 PLATFORMS
   ruby
