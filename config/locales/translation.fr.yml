@@ -776,15 +776,11 @@ fr:
     forgot_password: Mot de passe oublié
     reset_password: Réinitialiser le mot de passe
     password_confirmation: Confirmation
-    email_not_found: Adresse e-mail introuvable
     password_empty: Le mot de passe ne peut pas être vide
     password_reset: Le mot de passe a été réinitialisé
     instructions_sent: >-
       E-mail envoyé avec les instructions de réinitialisation
-      du mot de passe
-    cant_reset_nonlocal: >-
-      Désolé, il n'est possible de réinitialiser le mot de passe
-      que pour un utilisateur personnalisé (local)
+      du mot de passe (si un compte local existe)
     reset_expired: La réinitialisation du mot de passe est expirée.
     update_password: Mise à jour du mot de passe
   report_mailer:
@@ -1350,13 +1346,18 @@ fr:
           Le projet DOIT publier le processus de signalement des
           vulnérabilités sur le site du projet.
         details: >-
-          Par exemple, une adresse postale clairement désignée
-          sur https://PROJECTSITE/security, souvent sous la forme
-          security@example.org. Cela PEUT être identique à son
-          processus de signalement des bogues. Les signalements
-          de vulnérabilités PEUVENT toujours être publics, mais
-          de nombreux projets disposent d'un mécanisme privé de
-          signalement des vulnérabilités.
+          Les projets hébergés sur GitHub DEVRAIENT envisager
+          <a href="https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability"
+          >d'activer le signalement privé d'une vulnérabilité
+          de sécurité</a> . Les projets sur GitLab DEVRAIENT envisager
+          d'utiliser sa capacité à <a href="https://docs.github.com/en/code-security/security-advisories/guidance-on-reporting-and-writing/privately-reporting-a-security-vulnerability"
+          >signaler une vulnérabilité en privé</a> . Les projets
+          PEUVENT identifier une adresse postale sur https://PROJECTSITE/security,
+          souvent sous la forme security@example.org. Ce processus
+          de rapport de vulnérabilité PEUT être le même que son
+          processus de rapport de bogue. Les rapports de vulnérabilité
+          PEUVENT toujours être publics, mais de nombreux projets
+          ont un mécanisme de rapport de vulnérabilité privé.
       vulnerability_report_private:
         description: >-
           Si les signalements de vulnérabilités privés sont pris
@@ -1891,10 +1892,7 @@ fr:
           liste NIST des analyseurs de sécurité du code source</a>
           et <a href="https://www.dwheeler.com/essays/static-analysis-tools.html">la
           liste des outils d'analyse statique de Wheeler</a >.
-          <a href="https://continuousassurance.org/">SWAMP</a>
-          est une plate-forme gratuite pour évaluer les vulnérabilités
-          dans les logiciels utilisant une variété d'outils. S'il
-          n'y a pas d'outil d'analyse statique FLOSS disponible
+          S'il n'y a pas d'outil d'analyse statique FLOSS disponible
           pour le(s) langage(s) d'implémentation utilisé(s), sélectionnez
           « N/A ».
         na_placeholder: >-
@@ -3090,7 +3088,7 @@ fr:
         <a href="/fr/projects?gteq=100">les projets ayant obtenu le
         badge basique</a>). Vous pouvez également y voir
         <a href='/fr/projects/1/0'>un exemple (où nous essayons
-        d'obtenir notre propre badge)</a>. Ce projet a été développé à l'origine avec la OpenSSF, mais il fait maintenant partie du <a href="https://github.com/ossf/wg-best-practices-os-developers">Groupe de travail (GT) sur les meilleures pratiques</a> de l'<a href="https://openssf.org/">Open Source Security Foundation (OpenSSF)</a>.
+        d'obtenir notre propre badge)</a>. Ce projet était connu à l'origine comme le projet de Badge des Meilleures Pratiques de la Core Infrastructure Initiative (CII), et a été développé à l'origine dans le cadre de la CII. Il fait maintenant partie du <a href="https://github.com/ossf/wg-best-practices-os-developers">Groupe de travail (GT) sur les meilleures pratiques</a> de l'<a href="https://openssf.org/">Open Source Security Foundation (OpenSSF)</a>. OpenSSF est une fondation de la <a href="https://www.linuxfoundation.org/">Fondation Linux</a>. Le projet a été formellement renommé depuis le « Badge des Meilleures Pratiques de la CII » le 2021-12-24.
       p3_html: >-
         <em>Confidentialité et problèmes juridiques</em> : Consultez
         notre <a href="https://www.linuxfoundation.org/privacy">politique

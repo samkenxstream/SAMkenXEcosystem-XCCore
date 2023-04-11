@@ -23,7 +23,7 @@ jobs:
       CIRCLE_ARTIFACTS: /tmp/circleci-artifacts
       CIRCLE_TEST_REPORTS: /tmp/circleci-test-results
     docker:
-    - image: drdavidawheeler/cii-bestpractices@sha256:26cfbeb00f03483ba4ba67fa9b8727653496d24fa3f95ec7c6bff1325e6d32c1 # pin :3.0.1-browsers
+    - image: afader/cii-bestpractices@sha256:bc9f83b4b42b3aebae1c6bd333ce49286d9ca0015b68e494d6dd8b0f2ada948f # pin :3.0.5-browsers
       environment:
         PG_HOST: localhost
         PG_USER: ubuntu
@@ -188,7 +188,6 @@ jobs:
           command: |
             export PATH="$PATH:$(pwd)/heroku/bin"
             export HEROKU_APP="$CIRCLE_BRANCH"-bestpractices
-            if [ "$HEROKU_APP" = 'main-bestpractices' ] ; then export HEROKU_APP='master-bestpractices'; fi
             # Set file .netrc so "git push heroku ..." will work later.
             # Heroku uses HEROKU_API_KEY, but git only knows about ~/.netrc.
             # https://devcenter.heroku.com/articles/authentication
@@ -216,7 +215,6 @@ jobs:
           command: |
             export PATH="$PATH:$(pwd)/heroku/bin"
             export HEROKU_APP="$CIRCLE_BRANCH"-bestpractices
-            if [ "$HEROKU_APP" = 'main-bestpractices' ] ; then export HEROKU_APP='master-bestpractices'; fi
             heroku run --app "$HEROKU_APP" -- bundle exec rails db:migrate
             if [ -f '.recalculate' ] ; then
                 echo 'Recalculation marker found, performing recalculation.'
@@ -240,6 +238,5 @@ workflows:
           filters:
             branches:
               only:
-                - main
                 - staging
                 - production

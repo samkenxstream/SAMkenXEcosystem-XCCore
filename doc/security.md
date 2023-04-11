@@ -199,7 +199,6 @@ the supporting text below instead, because large figures are time-consuming
 to edit and for our purposes providing most evidence only in the supporting
 test is adequate.
 
-
 ## Structured Assurance Case Metamodel (SACM) Graphical Notation
 
 Some figures of this assurance case uses a subset of the
@@ -694,8 +693,8 @@ raw passwords and unencrypted email addresses).
 These are considered additional hardening measures, and so are
 discussed further in the section on hardening.
 
-Password reset requests (for local users) trigger an email, but that
-email is sent to the address as provided by the original account;
+Password reset requests (for local users) trigger an email,
+but that email is sent to the address as provided by the original account;
 emails are *not* sent to whatever email address is provided by the
 reset requestor (who might be an attacker).
 These email addresses match in the sense of `find_by`, which is a
@@ -706,6 +705,18 @@ You can verify this by reviewing
 `app/controllers/password_resets_controller.rb`.
 This approach completely counters the attack described in
 [Hacking GitHub with Unicode's dotless 'i'](https://eng.getwisdom.io/hacking-github-with-unicode-dotless-i/).
+
+The presence or absence of an email address is not revealed by the
+authentication system (countering enumeration or verification attacks):
+
+1. Local account creation always reports that the account must be
+   verified by checking the delivered email, whether or not the email
+   account exists. Thus, attempting to create a local account won't
+   reveal if the account exists to others.
+2. Password reset requests do *not* vary depending
+   on whether or not the email address is present as a local account.
+3. Failed login requests for local accounts simply reports that
+   the login failed; they do not indicate if the email address is present.
 
 #### HTTPS
 
@@ -2647,11 +2658,14 @@ but we think they greatly reduce the risks.
 To be secure, the software has to be secure as actually transitioned
 (deployed) and operated securely.
 
-Our transition process has software normally go through
-three tiers: master, staging, and production.
-The "master" tier runs the software at the HEAD of the master branch.
-Software that runs fine there is promoted to staging; software that
-runs find there is promoted to production (the "real" system).
+Our transition process has software normally go through tiers.
+At this time there are two deployed tiers: staging and production.
+At one time we also had a "main" aka "master" tier; that ran
+the software at the HEAD of the main (formerly master) branch,
+but to reduce costs we no longer have a tier that deploys the main branch.
+At any time software can be promoted from the main branch
+to the staging tier (using `rake deploy_staging`). Software that
+runs fine on the staging branch is promoted to production (the "real" system).
 In an emergency we can skip tiers or promote to them in parallel, but
 doing that is rare.
 

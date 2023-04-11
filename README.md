@@ -6,6 +6,7 @@
 [![CircleCI Build Status](https://circleci.com/gh/coreinfrastructure/best-practices-badge.svg?&style=shield&circle-token=ca450ac150523030464677a1aa7f3cacfb8b3472)](https://app.circleci.com/pipelines/github/coreinfrastructure/best-practices-badge)
 [![codecov](https://codecov.io/gh/coreinfrastructure/best-practices-badge/branch/master/graph/badge.svg)](https://codecov.io/gh/coreinfrastructure/best-practices-badge)
 [![License](https://img.shields.io/:license-mit-blue.svg)](https://badges.mit-license.org)
+[![openssf scorecards](https://api.securityscorecards.dev/projects/github.com/coreinfrastructure/best-practices-badge/badge)](https://api.securityscorecards.dev/projects/github.com/coreinfrastructure/best-practices-badge)
 
 This project identifies best practices for
 Free/Libre and Open Source Software (FLOSS)
@@ -41,7 +42,7 @@ Interesting pages include:
 * Badging **[Criteria for the passing level](https://bestpractices.coreinfrastructure.org/criteria/0)**
 * **[Criteria for all badging levels](https://bestpractices.coreinfrastructure.org/criteria)**
 * Information on how to **[contribute](./CONTRIBUTING.md)**
-  (including how to report vulnerabilities)
+* Information on **[our own security, including how to report vulnerabilities in our badge application](./SECURITY.md)**
 * [Up-for-grabs](https://github.com/coreinfrastructure/best-practices-badge/labels/up-for-grabs)
   lists smaller tasks that may take 1-3 days, and are ideal for people
   new to the project (or FLOSS in general)
