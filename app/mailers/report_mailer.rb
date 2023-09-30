@@ -71,6 +71,7 @@ class ReportMailer < ApplicationMailer
     @email_destination = user.email
     @new_level = new_badge_level
     @old_level = old_badge_level
+    @hostname = ENV.fetch('PUBLIC_HOSTNAME', 'localhost')
     set_standard_headers
     I18n.with_locale(user.preferred_locale.to_sym) do
       mail(
@@ -143,6 +144,7 @@ class ReportMailer < ApplicationMailer
     @month_display = month_display
     @last_stat_in_prev_month = last_stat_in_prev_month
     @last_stat_in_prev_prev_month = last_stat_in_prev_prev_month
+    @hostname = ENV.fetch('PUBLIC_HOSTNAME', 'localhost')
     set_standard_headers
     I18n.with_locale(I18n.default_locale) do
       mail(

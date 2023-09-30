@@ -63,10 +63,16 @@ The application is configured by various environment variables:
   project was last sent a reminder
 * RAILS_ENV (default 'development'): Rails environment, one of
   'test', 'development', 'fake_production', and 'production'.
-  The main/master, staging, and production systems set this to 'production'.
+  The main/master, staging, and production systems set this to 'production',
+  because we want our final test systems to be as
+  "most like the real production system as practical".
   See the discussion below about fake_production.
+* BADGEAPP_REAL_PRODUCTION: Has a non-empty value (conventionally "true") if
+  this is the *true* production system. If not present, we show the user a
+  warning that this isn't the production system.
 * BADGEAPP_DAY_FOR_MONTHLY: Day of the month to monthly activities, e.g.,
   send out monthly reminders.  Default 5.  Set to 0 to disable monthly acts.
+* BADGEAPP_FROM: Email address to send email from.
 * FASTLY_CLIENT_IP_REQUIRED: If present, download the Fastly list of
   client IPs, and only let those IPs make requests.  Enabling this
   counters cloud piercing.  This isn't on by default, but the environment
@@ -82,10 +88,10 @@ The application is configured by various environment variables:
   "production" or "fake_production". Plausible values are
   "debug", "info", and "warn". Default is "info". See:
   <http://guides.rubyonrails.org/debugging_rails_applications.html>
-* EMAIL_ENCRYPTION_KEY: Key to decrypt email addresses.
+* EMAIL_ENCRYPTION_KEY: Key to decrypt the stored user email addresses.
   Hexadecimal string, must be 64 hex digits (==32 bytes==256 bits).
   Used by aes-256-gcm (256-bit AES in GCM mode).
-* EMAIL_BLIND_INDEX_KEY: Key for blind index created for email
+* EMAIL_BLIND_INDEX_KEY: Key for blind index created for user email addresses
   (used by PBKDF2-HMAC-SHA256).  Must be 64 hex digits (==32 bytes==256 bits).
 * BADGEAPP_DENY_LOGIN: If a non-blank value is set ("true" is recommended),
   then no on can log in, no one can create a new account (sign up),
@@ -149,6 +155,20 @@ The application is configured by various environment variables:
 * `BADGE_CACHE_STALE_AGE` : Time (in seconds) badges are served by the CDN
   if it can't get a new value from us.
   Default 8640000 (100 days), is forced to be at least 2x`BADGE_CACHE_MAX_AGE`
+* `BADGEAPP_SEND_EMAIL_*`: Various environment variables that configure how the
+  BadgeApp sends email to an email server (a kind of Mail Transfer Agent (MTA))
+  that will then be sent on to others. See `config/environments/production.rb`.
+* `BADGEAPP_SEND_EMAIL_ADDRESS`: The domain of the MTA to send email to, e.g.,
+   `smtp.sendgrid.net`. Note that this is NOT the email address of the
+   *sender* but the domain of the remote mail server (the MTA) that will be
+   *receiving* the email and then send it on.
+* `BADGEAPP_SEND_EMAIL_PORT`: Port of the MTA. Use one that forces TLS or
+   or modify the config file.
+* `BADGEAPP_SEND_EMAIL_USERNAME`: Username for logging into the MTA
+* `BADGEAPP_SEND_EMAIL_PASSWORD`: Password for logging into the MTA
+* `BADGEAPP_SEND_EMAIL_DOMAIN`: Domain to report to the MTA (for HELO)
+* `SENDGRID_USERNAME` and `SENDGRID_PASSWORD`: These were once used for sending email,
+  but these are *not* used any more.
 
 You can make cryptographically random values (such as keys)
 using "rails secret".  E.g., to create 64 random hexadecimal digits, use:
@@ -246,11 +266,11 @@ To modify the text of the criteria, edit these files:
 - config/locales/en.yml - YAML file that includes criteria and details text
 - criteria/criteria.yml - YAML file that includes other criteria information
 
-Note that the file "doc/criteria.md" (which reports the "passing" criteria)
+Note that the file "docs/criteria.md" (which reports the "passing" criteria)
 is a *generated* file, generated from those files, and is
 automatically regenerated when "rake" is run.
 This generated file is checked into git so that it's accessible via GitHub.
-The file "doc/other.md" is currently hand-edited; we intend for it to be
+The file "docs/other.md" is currently hand-edited; we intend for it to be
 automatically generated in the same way, but that isn't true at the
 time of this writing.
 
@@ -589,6 +609,28 @@ stored as environment variables.
 The variable names of Oauth2 credentials are "GITHUB_KEY" and "GITHUB_SECRET".
 If running on heroku, set config variables by following instructions on [2].
 
+If you need to set this up for your own instance, go to
+<https://github.com/settings/applications/new>
+to "Register a new OAuth application" and create a corresponding new token.
+Here's how we created the "staging" token for staging.bestpractices.dev:
+
+* Application Name: Best Practices Badge (Staging)
+* Homepage URL: https://staging.bestpractices.dev
+* Authorization callback URL: https://staging.bestpractices.dev/auth/github/callback
+* We enabled "device flow" because it might be useful someday.
+
+Similarly, here are the settings for the
+"production" token for www.bestpractices.dev:
+
+* Application Name: Best Practices Badge
+* Homepage URL: https://www.bestpractices.dev
+* Authorization callback URL: https://www.bestpractices.dev/auth/github/callback
+* We enabled "device flow" because it might be useful someday.
+
+You can see the status of these tokens on GitHub here:
+<https://github.com/settings/developers>
+under "OAuth applications".
+
 If running locally, these variables need to be set up.
 We have set up a file '.env' at the top level which has stub values,
 formatted like this, so that it automatically starts up
@@ -610,7 +652,7 @@ GITHUB_KEY='client id' GITHUB_SECRET='client secret' rails s
 where *client id* and *client secret* are registered OAuth2 credentials
 of the app.
 
-The authorization callback URL in GitHub is:
+The authorization callback URL in GitHub for this dummy application is:
 <http://localhost:3000/auth/github>
 
 [1] <https://github.com/settings/applications/new>
@@ -853,7 +895,7 @@ That may seem surprising, however:
 * The main main stress on the system is badge requests,
   and we offload practically all of that work to our CDN.
 * We run multiple threads (so we can handle a number of simultaneous requests).
-* We agressively use fragment caching stored in our
+* We aggressively use fragment caching stored in our
   server-side data cache store.
 * We ensure that JavaScript and such are set to cache
   on the client side, so are normally sent only once to a given client.
@@ -1015,7 +1057,7 @@ We want GitHub users to think of this
 as &#8220;just another badge to get.&#8221;
 
 We intend to sign up for a few badges so we can
-evalute their onboarding process,
+evaluate their onboarding process,
 e.g., Travis (CI automation), Code Climate (code quality checker including
 BrakeMan), Coveralls (code coverage), Hound (code style),
 Gymnasium (checks dependencies), HCI (looks at your documentation).
@@ -1084,14 +1126,15 @@ See the Action mailer basics guide at
 and Hartl's Rails tutorial, e.g.:
 <https://www.railstutorial.org/book/account_activation_password_reset#sec-email_in_production>
 
-To install sendgrid on Heroku to make this work, use:
+We used to use SendGrid. You *can* just use SendGrid directly.
+You can also install sendgrid on Heroku to provide some extra functions doing this:
 
 ~~~~sh
 heroku addons:create sendgrid:starter
 ~~~~
 
 If you plan to handle a lot of queries, you probably want to use a CDN.
-It's currently set up for Fastly.
+It's currently set up to use Fastly.
 
 ## Badge SVG
 
@@ -1113,7 +1156,7 @@ and were researched separately:
 * gitlab: URL <https://github.com/NARKOZ/gitlab/blob/master/LICENSE.txt> reveals this to be license BSD-2-Clause.
 * colored: URL <https://github.com/defunkt/colored/blob/master/LICENSE> reveals this to be license MIT.
 
-For more on license decisions see doc/dependency_decisions.yml.
+For more on license decisions see docs/dependency_decisions.yml.
 You can also run 'rake' and see the generated report
 license_finder_report.html.
 
@@ -1354,7 +1397,7 @@ and
 ## fake_production
 
 If you want to debug a problem that only appears in a production-like
-envionment, try the 'fake_production' environment.
+environment, try the 'fake_production' environment.
 Here is how to enable it:
 
 ~~~~
@@ -1440,7 +1483,7 @@ That said, there's no harm in running it, here's how:
 git gc's has an "--aggressive" option, but I suggest avoiding it,
 as that is almost never what you want.
 
-If you are desparate for space you can make the repo a shallow copy
+If you are desperate for space you can make the repo a shallow copy
 instead, but then you do not have the full git history.
 
 ## API
@@ -1507,4 +1550,4 @@ Development processes and security:
 * [design.md](design.md) - Architectural design information
 * [implementation.md](implementation.md) - Implementation notes
 * [testing.md](testing.md) - Information on testing
-* [security.md](security.md) - Why it's adequately secure (assurance case)
+* [assurance-case.md](assurance-case.md) - Why it's adequately secure (assurance case)

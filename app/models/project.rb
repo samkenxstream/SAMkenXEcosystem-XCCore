@@ -261,7 +261,7 @@ class Project < ApplicationRecord
   # in a project.  These are:
   # :criterion_passing -
   #   'Met' (or 'N/A' if applicable) has been selected for the criterion
-  #   and all requred justification text (including url's) have been entered  #
+  #   and all required justification text (including url's) have been entered  #
   # :criterion_failing -
   #   'Unmet' has been selected for a MUST criterion'.
   # :criterion_barely -
@@ -359,7 +359,7 @@ class Project < ApplicationRecord
   # It presumes the lower-level percentages (if relevant) are calculated.
   def update_badge_percentage(level, current_time)
     old_badge_percentage = self["badge_percentage_#{level}".to_sym]
-    update_prereqs(level) unless level.to_i.zero?
+    update_prereqs(level) if level.to_i.nonzero?
     self["badge_percentage_#{level}".to_sym] =
       calculate_badge_percentage(level)
     update_passing_times(level, old_badge_percentage, current_time)
@@ -618,7 +618,7 @@ class Project < ApplicationRecord
     # Give percentage, but only up to 99% (so "100%" always means "complete")
     # The tertiary operator is clearer & faster than using [...].min
     result = ((portion * 100.0) / total).round
-    result > 99 ? 99 : result
+    [result, 99].min
   end
 
   # Update achieved_..._at & lost_..._at fields given level as number

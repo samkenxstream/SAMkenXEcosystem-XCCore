@@ -8,7 +8,6 @@
 module SessionsHelper
   SESSION_TTL = 48.hours # Automatically log off session if inactive this long
   RESET_SESSION_TIMER = 1.hour # Active sessions older than this reset timer
-  PRODUCTION_HOSTNAME = 'bestpractices.coreinfrastructure.org'
   GITHUB_PATTERN = %r{
     \Ahttps://github.com/([A-Za-z0-9_.-]+)/([A-Za-z0-9_.-]+)/?\Z
   }x.freeze
@@ -28,6 +27,7 @@ module SessionsHelper
   # rubocop: disable Metrics/AbcSize
   def force_locale_url(original_url, locale)
     url = URI.parse(original_url)
+    url.host = ENV.fetch('PUBLIC_HOSTNAME', url.host)
     # Remove locale from query string and main path.  The removing
     # substitution will sometimes remove too much, so we prepend a '/'
     # if that happens.
@@ -123,12 +123,12 @@ module SessionsHelper
 
     github = client.new access_token: session[:user_token]
     begin
-      github.repo(github_path).permissions.push
+      github.repo(github_path).permissions.presence && github.repo(github_path).permissions[:push]
     # If you suddenly get a lot of 503's most likely github has changed
     # its API, make this a generic rescue
     # Disable rubocop - Style/RescueStandardError if that is needed
     rescue Octokit::NotFound
-      false
+      return false
     end
   end
 
@@ -190,10 +190,8 @@ module SessionsHelper
   # Returns true iff this is not the REAL final production system,
   # including the master/main and staging systems.
   # It only returns false if we are "truly in production"
-  def in_development?(hostname = ENV.fetch('PUBLIC_HOSTNAME', nil))
-    return true if hostname.nil?
-
-    hostname != PRODUCTION_HOSTNAME
+  def in_development?(is_real = ENV.fetch('BADGEAPP_REAL_PRODUCTION', nil))
+    return is_real.nil?
   end
 
   # Redirects to stored location (or to the default)
@@ -260,7 +258,7 @@ module SessionsHelper
     url.match(GITHUB_PATTERN).captures.join('/')
   end
 
-  # Check if refering url is internal, if so, save it.
+  # Check if referring url is internal, if so, save it.
   def store_internal_referer
     return if request.referer.nil?
 

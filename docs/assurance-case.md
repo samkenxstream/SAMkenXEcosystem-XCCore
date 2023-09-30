@@ -394,7 +394,8 @@ learning about our users' activities (and thus maintaining user privacy):
   (e.g., to activate a local account), but those links go directly back
   to our site for that given purpose, and do not reveal information to
   anyone else.
-  We use SendGrid to send email, but we have specifically configured the
+  You need to configure the MTA used to send email before you can use it.
+  We used to use SendGrid to send email; we have specifically configured the
   [SendGrid X-SMTPAPI header to disable all of its trackers we know of](https://sendgrid.com/docs/ui/account-and-settings/tracking/),
   which are clicktrack, ganalytics, subscriptiontrack, and opentrack.
   For example, we have never used ganalytics, but by expressly disabling it,
@@ -438,7 +439,7 @@ We could download these images and re-serve them (such as via a proxy),
 but copying or proxying the images
 using our own site might be considered a copyright violation
 and would also impose the need for significant extra resources.
-Thus, since we do not serve avatars ourselves, we must direct requestors
+Thus, since we do not serve avatars ourselves, we must direct requesters
 to them, so at the very least the requestor's externally-visible IP address
 must be visible to the external avatar service (so the image can be provided).
 To provide additional privacy, we would like to also
@@ -864,7 +865,7 @@ able to reconstitute it (including its data).
 #### Cloud & CDN deployment allow quick scale-up
 
 We can quickly add more resources if more requests are made.
-See the design section "availability through scaleability" below
+See the design section "availability through scalability" below
 for more about how we handle scaling up.
 
 #### Timeout
@@ -1195,7 +1196,7 @@ and the most concerning ones fit in one of these categories:
 Criminal organizations may try to DDoS us for money, but there's no
 strong reason for us to pay the extortion fee.
 We expect that people will be willing to come back to the site later
-if it's down, and we have scaleability countermeasures to reduce their
+if it's down, and we have scalability countermeasures to reduce their
 effectiveness.  If the attack is ongoing, several of the services we use
 would have a financial incentive to help us counter the attacks.
 This makes the attacks themselves less likely
@@ -1253,7 +1254,7 @@ to improve security:
 using a simple design,
 applying secure design principles,
 limiting memory-unsafe language use, and
-increasing availability through scaleability.
+increasing availability through scalability.
 
 The design, including the security-related items identified here,
 were developed through our
@@ -1307,7 +1308,7 @@ it to the appropriate controller.
 *   Repudiation. N/A.
 *   Information disclosure. These simply deliver untrusted data to components
     we trust to handle it properly.
-*   Denial of service. We use scaleability, caching, a CDN,
+*   Denial of service. We use scalability, caching, a CDN,
     and rapid recovery to help deal with denial of service attacks.
     Large denial of service attacks are hard to counter, and we don't claim
     to be able to prevent them.
@@ -1586,7 +1587,7 @@ including all 8 principles from
   application is just looking for the presence or absence of certain
   data patterns, and never executes data from the project.
 
-### Availability through scaleability
+### Availability through scalability
 
 Availability is, as always, especially challenging.
 Our primary approach is to ensure that the design scales.
@@ -1956,17 +1957,20 @@ as of 2015-12-14:
    but the data is sufficiently low value, and there aren't
    good alternatives for low value data like this.
    This isn't as bad as it might appear, because we prefer encrypted
-   channels for transmitting all emails. Our application attempts to send
+   channels for transmitting all emails.
+   Historically our application attempts to send
    messages to its MTA using TLS (using `enable_starttls_auto: true`),
-   and that MTA (SendGrid) then attempts to transfer the email the rest
+   and that MTA then attempts to transfer the email the rest
    of the way using TLS if the recipient's email system supports it
    (see <https://sendgrid.com/docs/Glossary/tls.html>).
    This is good protection against passive attacks, and is relatively decent
    protection against active attacks if the user chooses an email system
    that supports TLS (an active attacker has to get between the email
    MTAs, which is often not easy).
+   More recently we're using `enable_starttls: true` which *forces* email to be
+   encrypted point-to-point.
    If users don't like that, they can log in via GitHub and use GitHub's
-   forgotten password system.
+   system for dealing with forgotten passwords.
    The file `config/initializers/filter_parameter_logging.rb`
    intentionally filters passwords so that they are not included in the log.
    We require that local user passwords have a minimum length
@@ -2909,7 +2913,7 @@ which we've had to specially handle.
 Library `omniauth` has a publicly-known vulnerability CVE-2015-9284.
 We have chosen to counter vulnerability CVE-2015-9284 by installing a
 third-party countermeasure, `omniauth-rails_csrf_protection` and ensuring
-that our configuation counters the problem.
+that our configuration counters the problem.
 This is the
 [recommended approach on the omniauth wiki](https://github.com/omniauth/omniauth/wiki/Resolving-CVE-2015-9284)
 given discussion on
@@ -3070,7 +3074,7 @@ the assurance case here to determine how to counter that risk.
 
 ## Quality assurance
 
-We continously review our processes and their results to see if there
+We continuously review our processes and their results to see if there
 are systemic problems, and if so, try to address them.
 In particular, we try to maximize automation, including automated tests
 and automated security analysis, to reduce the risk that the deployed
@@ -3220,7 +3224,7 @@ believe they are acceptable:
     have a process that supports rapid update.
 *   *DDoS.*
     We use a variety of techniques to reduce the impact of DDoS attacks.
-    These include using a scaleable cloud service,
+    These include using a scalable cloud service,
     using a Content Delivery Network (CDN), and requiring
     the system to return to operation quickly after
     a DDoS attack has ended.
@@ -3448,4 +3452,4 @@ Development processes and security:
 * [design.md](design.md) - Architectural design information
 * [implementation.md](implementation.md) - Implementation notes
 * [testing.md](testing.md) - Information on testing
-* [security.md](security.md) - Why it's adequately secure (assurance case)
+* [assurance-case.md](assurance-case.md) - Why it's adequately secure (assurance case)
